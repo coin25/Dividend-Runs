@@ -34,7 +34,6 @@ dates_ahead = []
 #Storing differences in all the dates since dividend pay outs aren't the same
 for entry in dividends["data"]:
     dates_ahead.append(str(window - entry["date"]).split(" ")[0])
-    print(str(window - entry["date"]))
 
 
 dates_ahead = list(map(lambda x: abs(int(x)), dates_ahead))
@@ -62,7 +61,7 @@ print("Pages of dividend", dividends["total_pages"])
 total_pages = int(r["total_pages"])
 print(total_pages)
 pages_stored = []
-
+'''
 for page in range(1, total_pages + 1):
     url = 'https://api.intrinio.com/prices?identifier=AAPL&sort_order=asc&page_number={}'.format(page)
     s = requests.Session()
@@ -78,14 +77,14 @@ with open("testing", "w") as file:
 with open("testing", "r") as file:
     for line in file:
         pages_stored.append(literal_eval(line))
-'''
+
 
 #Simple Total return index calculation, $100 to start
-tri = 100
+tri = 990
 num_stocks = None
 
 with open('output.csv', 'w') as csvfile:
-    fieldnames = ['Stock Price', 'Date', 'Split Ratio', 'Dividend Value', 'Total Return Index', 'Stocks Owned']
+    fieldnames = ['Stock Price', 'Date', 'Split Ratio', 'Dividend Value', 'Total Return Index', 'Shares Owned']
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
     writer.writeheader()
@@ -100,11 +99,10 @@ with open('output.csv', 'w') as csvfile:
             for k in dividends['data']:
                 if i['date'] == k['date']:
                     dividend = k["value"]
-                    print(dividend)
                     #Use the dividend received for all owned shares to buy more shares
                     num_stocks += (num_stocks * dividend) / i["adj_close"]
             #Our TRI is equal to the number of stocks we own times the stock price
             tri = num_stocks * i["adj_close"]
             writer.writerow({'Date': i["date"], 'Stock Price': i["adj_close"],
                              'Split Ratio': i["split_ratio"], 'Dividend Value': dividend,
-                             'Total Return Index': tri, "Stocks Owned": num_stocks})
+                             'Total Return Index': tri, "Shares Owned": num_stocks})
