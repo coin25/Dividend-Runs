@@ -44,8 +44,6 @@ print(curr_pos)
 bottom_bound = 0
 
 #Note: This means that when we reach the end with our bound of sliding window we will never get another run
-
-
 '''
 while curr_pos < len(dividends["data"]):
     increase = dividends["data"][curr_pos]["value"] / dividends["data"][bottom_bound]["value"]
@@ -82,8 +80,7 @@ with open("testing", "r") as file:
         pages_stored.append(literal_eval(line))
 '''
 
-print(len(pages_stored))
-#Simple Total return index calculation
+#Simple Total return index calculation, $100 to start
 tri = 100
 num_stocks = None
 
@@ -94,6 +91,7 @@ with open('output.csv', 'w') as csvfile:
     writer.writeheader()
     for r in pages_stored:
         for i in r["data"]:
+            #Change to proper dates
             year, month, day = i["date"].split("-")
             i["date"] = datetime.date(int(year), int(month), int(day))
             dividend = None
@@ -103,7 +101,9 @@ with open('output.csv', 'w') as csvfile:
                 if i['date'] == k['date']:
                     dividend = k["value"]
                     print(dividend)
+                    #Use the dividend received for all owned shares to buy more shares
                     num_stocks += (num_stocks * dividend) / i["adj_close"]
+            #Our TRI is equal to the number of stocks we own times the stock price
             tri = num_stocks * i["adj_close"]
             writer.writerow({'Date': i["date"], 'Stock Price': i["adj_close"],
                              'Split Ratio': i["split_ratio"], 'Dividend Value': dividend,
