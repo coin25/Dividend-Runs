@@ -80,7 +80,7 @@ with open("testing", "r") as file:
 
 
 #Simple Total return index calculation, $100 to start
-tri = 990
+tri = 100
 num_stocks = None
 
 with open('output.csv', 'w') as csvfile:
